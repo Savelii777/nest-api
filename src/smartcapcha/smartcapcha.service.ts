@@ -10,7 +10,7 @@ export class SmartcapchaService {
 
         const url = 'https://smartcaptcha.yandexcloud.net/validate';
         const params = {
-            secret: 'SMARTCAPTCHA_SERVER_KEY', // тут введите ключ капчи
+            secret: 'ysc2_g7nQRIVGAacWGILLRPnjMitxiNTTjjtG58Z7h8toee2cad50', // тут введите ключ капчи
             token,
         };
 
