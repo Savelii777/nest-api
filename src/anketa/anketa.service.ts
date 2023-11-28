@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import {map} from "rxjs/operators";
 interface Child {
     id: string;
@@ -8,10 +9,10 @@ interface Child {
 }
 @Injectable()
 export class AnketaService {
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService, private readonly configService: ConfigService) {}
 
     async sendAnketa(number: number, phone: string, name: string, birthday: string, children: Child[], dateAccess: string, isPromo: boolean): Promise<boolean> {
-        const url = '';
+        const url = `${this.configService.get('API_URL')}/Anketa`;
         const data = {
             "number": number,
             "phone": phone,

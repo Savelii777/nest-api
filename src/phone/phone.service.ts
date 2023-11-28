@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {map} from "rxjs/operators";
 import {HttpService} from "@nestjs/axios";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PhoneService {
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService, private readonly configService: ConfigService) {}
 
     private generatedCode: string;
     private context: any;
@@ -12,26 +13,24 @@ export class PhoneService {
     async getCode(phone: string, code: string): Promise<boolean> {
         this.generatedCode = code;
 
-        const url = '';
+        const url = `${this.configService.get('PHONE_API_URL')}`;
         const data = {
             messages: [
                 {
-                    from: 'sendersName',
-                    to: phone,
-                    text: code,
+                   from: this.configService.get('SENDERS_NAME'),
+                   to: phone,
+                   text: code,
                     validity: 0,
                     scheduledTime: '2022-09-09T08:52:27.319Z',
                     priority: 'HIGH',
-                    callbackUrl: 'https://www.callback-url.com/',
-                    options: {
-                        key1: 'value1',
-                        key2: 'value2',
-                    },
                 },
             ],
         };
+        const headers = {
+            Authorization: `Key ${this.configService.get('PHONE_AUTHORISATON_KEY')}`,
+        };
 
-        const response$ = this.httpService.post(url, data);
+        const response$ = this.httpService.post(url, data, { headers });
 
         return response$.pipe(
             map((response) => response.data.status === 'ok'),

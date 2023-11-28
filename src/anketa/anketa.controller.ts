@@ -2,6 +2,8 @@ import {Body, Controller, Get, Post} from '@nestjs/common';
 import { AnketaService } from './anketa.service';
 import { PhoneService } from '../phone/phone.service';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+
 
 interface Child {
   id: string;
@@ -11,7 +13,7 @@ interface Child {
 
 @Controller('anketa')
 export class AnketaController {
-  constructor(private readonly anketaService: AnketaService, private readonly phoneService: PhoneService, private readonly http: HttpService) {}
+  constructor(private readonly anketaService: AnketaService, private readonly phoneService: PhoneService, private readonly http: HttpService, private readonly configService: ConfigService) {}
 
   @Post('sendAnketa')
   async sendAnketa(
@@ -28,7 +30,7 @@ export class AnketaController {
 
   @Post('getAnketa')
   async getAnketa(@Body('phone') phone: string) {
-    const url = `/Anketa/${phone.replace('+7', '').replace('(', '').replace(')', '').replace('-', '')}`;
+    const url = `${this.configService.get('API_URL')}/Anketa/${phone.replace('+7', '').replace('(', '').replace(')', '').replace('-', '')}`;
     const response = await this.http.get(url);
     return response;
   }
