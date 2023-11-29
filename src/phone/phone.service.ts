@@ -3,6 +3,10 @@ import {map} from "rxjs/operators";
 import {HttpService} from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
 
+interface IContext {
+    generatedCode: string;
+    userPhone: string;
+}
 @Injectable()
 export class PhoneService {
 
@@ -12,14 +16,15 @@ export class PhoneService {
     ) {}
 
     private generatedCode: string;
-    private context: any;
+    private userPhone: string;
+    private context: IContext;
 
     async getCode(phone: string): Promise<boolean> {
         this.generatedCode = Math.floor(
             Math.random() * (999999 - 100000 + 1) + 100000
         ).toString();
         console.log(`сгенерированный код ${this.generatedCode}`);
-        this.setContext(this.generatedCode);
+        this.userPhone = phone;
         const url = `${this.configService.get('PHONE_API_URL')}`;
         const data = {
             messages: [
@@ -44,12 +49,15 @@ export class PhoneService {
         ).toPromise();
     }
 
-    async getGeneratedCode(): Promise<string> {
-        return this.generatedCode;
+    async getGeneratedCode(): Promise<string[]> {
+        return [this.generatedCode, this.userPhone];
     }
 
-    setContext(context: any) {
-        this.context = context;
+    setContext(generatedcode:string, userphone:string) {
+        this.context = {
+            userPhone: userphone,
+            generatedCode: generatedcode
+        };
     }
 
     getContext() {

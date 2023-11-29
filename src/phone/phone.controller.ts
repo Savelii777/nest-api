@@ -15,9 +15,9 @@ export class PhoneController {
 
   @Post('check')
   async check(@Body('code') code: string): Promise<boolean> {
-    const generatedCode = await this.phoneService.getGeneratedCode();
-    console.log(`${generatedCode} ${code}`);
+    const data = await this.phoneService.getGeneratedCode();
+    console.log(`${data[0]} ${code}`);
 
-    return code === generatedCode;
+    return data[0].includes(code);
   }
 }
